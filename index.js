@@ -1,3 +1,5 @@
+// penggunaan ajax
+
 // $(".search-button").on("click", function () {
 //   $.ajax({
 //     url:
@@ -66,60 +68,134 @@
 //               </div>`;
 // }
 
-let lagi = false;
+// akhir ajax
 
-const film = new Promise((resolve, reject) => {
-  if (lagi) {
-    setTimeout(() => {
-      resolve([
-        {
-          nama: "batman",
-          genre: "action",
-          rating: 3,
-        },
-      ]);
-    }, 3000);
-  } else {
-    setTimeout(() => {
-      reject([
-        {
-          salah: "ulang lagi",
-        },
-      ]);
-    }, 3000);
-  }
+// promise
+// let lagi = false;
+
+// const film = new Promise((resolve, reject) => {
+//   if (lagi) {
+//     setTimeout(() => {
+//       resolve([
+//         {
+//           nama: "batman",
+//           genre: "action",
+//           rating: 3,
+//         },
+//       ]);
+//     }, 3000);
+//   } else {
+//     setTimeout(() => {
+//       reject([
+//         {
+//           salah: "ulang lagi",
+//         },
+//       ]);
+//     }, 3000);
+//   }
+// });
+
+// const cuaca = new Promise((resolve, reject) => {
+//   if (lagi) {
+//     setTimeout(() => {
+//       resolve([
+//         {
+//           kondisi: "hujan",
+//           kota: "garut",
+//           suhu: 19,
+//         },
+//       ]);
+//     }, 3000);
+//   } else {
+//     setTimeout(() => {
+//       reject([
+//         {
+//           gagal: "coba lagi",
+//         },
+//       ]);
+//     }, 3000);
+//   }
+// });
+
+// const data = Promise.all([film, cuaca])
+//   .then((ress) => {
+//     const [film, cuaca] = ress;
+//     console.log(film[0]);
+//     console.log(cuaca);
+//   })
+//   .catch((ress) => {
+//     const [film, cuaca] = ress;
+//     console.log(film[0]);
+//     console.log(cuaca);
+//   });
+
+// akhir promise
+
+// fetch
+
+const searchButton = document.querySelector(".search-button");
+searchButton.addEventListener("click", function () {
+  const inputKeyword = document.querySelector(".input-keyword");
+
+  fetch("http://www.omdbapi.com/?apikey=5b1d8303&s=" + inputKeyword.value)
+    .then((ress) => ress.json())
+    .then((ress) => {
+      const movies = ress.Search;
+      let cards = " ";
+      movies.forEach((m) => (cards += showCards(m)));
+      const movieContainer = document.querySelector(".movies-container");
+      movieContainer.innerHTML = cards;
+
+      // ketika tombol detail klik
+      const modalDetailButton = document.querySelectorAll(
+        ".movie-detail-button"
+      );
+      modalDetailButton.forEach((btn) => {
+        btn.addEventListener("click", function () {
+          const imdbid = this.dataset.imdbid;
+          fetch("http://www.omdbapi.com/?apikey=5b1d8303&i=" + imdbid)
+            .then((ress) => ress.json())
+            .then((m) => {
+              const movieDetail = cardDetail(m);
+              const modalBody = document.querySelector(".modal-body");
+              modalBody.innerHTML = movieDetail;
+            });
+        });
+      });
+    });
 });
 
-const cuaca = new Promise((resolve, reject) => {
-  if (lagi) {
-    setTimeout(() => {
-      resolve([
-        {
-          kondisi: "hujan",
-          kota: "garut",
-          suhu: 19,
-        },
-      ]);
-    }, 3000);
-  } else {
-    setTimeout(() => {
-      reject([
-        {
-          gagal: "coba lagi",
-        },
-      ]);
-    }, 3000);
-  }
-});
+function showCards(m) {
+  return `<div class="col-md-3 my-3">
+            <div class="card">
+              <img src="${m.Poster}" class="card-img-top" />
+              <div class="card-body">
+                <h5 class="card-title">${m.Title}</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">${m.Year}</h6>
+                <a href="#" class="btn btn-primary movie-detail-button" data-bs-toggle="modal"
+                data-bs-target="#movieDetail" data-imdbid=${m.imdbID} >Show details</a>
+              </div>
+            </div>
+          </div>`;
+}
 
-const data = Promise.all([film, cuaca])
-  .then((ress) => {
-    const [film, cuaca] = ress;
-    console.log(film[0]);
-    console.log(cuaca);
-  })
-  .catch((ress) => {
-    const [film, cuaca] = ress;
-    console.log(film[0]);
-    console.log(cuaca);
-  });
+function cardDetail(m) {
+  return `<div class="container-fluid">
+              <div class="row">
+                  <div class="col-md-3">
+                    <img src="${m.Poster}" class="img-fluid" />
+                  </div>
+                  <div class="col-md">
+                    <ul class="list-group">
+                      <li class="list-group-item"><strong>${m.Title}</strong></li>
+                      <li class="list-group-item"><strong>Director : </strong>${m.Director}</li>
+                      <li class="list-group-item"><strong>writers : </strong>${m.Writer}</li>
+                      <li class="list-group-item"><strong>Actors : </strong>${m.Actors}</li>
+                      <li class="list-group-item">
+                        <strong>Plot : </strong><br  />${m.Plot}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>`;
+}
