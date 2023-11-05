@@ -177,7 +177,7 @@ searchButton.addEventListener("click", async function () {
 function getMovies(keyword) {
   return fetch("http://www.omdbapi.com/?apikey=5b1d8303&s=" + keyword)
     .then((ress) => ress.json())
-    .then((ress) => ress.Search);
+    .then((ress) => ress.Search); // hati hati di bagian sini harus benar
 }
 
 function updateUI(movies) {
@@ -200,7 +200,7 @@ document.addEventListener("click", async function (e) {
 function getMovieDetails(imdbid) {
   return fetch("http://www.omdbapi.com/?apikey=5b1d8303&i=" + imdbid)
     .then((ress) => ress.json())
-    .then((ress) => ress);
+    .then((ress) => ress); // hati hati di bagian sini harus benar
 }
 
 function updateUIDetail(m) {
@@ -209,6 +209,7 @@ function updateUIDetail(m) {
   modalBody.innerHTML = movieDetail;
 }
 
+// method
 function showCards(m) {
   return `<div class="col-md-3 my-3">
             <div class="card">
